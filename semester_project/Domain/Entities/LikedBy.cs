@@ -1,4 +1,4 @@
-namespace semester_project.models;
+namespace semester_project.Domain.Entities;
 
 public class LikedBy(string id, string userId, string rateId)
 {

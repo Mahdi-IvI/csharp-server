@@ -1,4 +1,5 @@
-namespace semester_project.models;
+
+namespace semester_project.Domain.Entities;
 
 public class Favorite(string id, string userId, string mediaId)
 {

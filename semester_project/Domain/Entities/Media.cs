@@ -1,6 +1,5 @@
-using System.Runtime.Serialization;
 
-namespace semester_project.models;
+namespace semester_project.Domain.Entities;
 
 public enum MediaType
 {

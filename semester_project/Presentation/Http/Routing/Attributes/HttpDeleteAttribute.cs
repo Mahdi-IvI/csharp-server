@@ -1,6 +1,6 @@
 namespace semester_project.Presentation.Http.Routing.Attributes;
 
-public class HttpDeleteAttribute
+public sealed class HttpDeleteAttribute : HttpMethodAttribute
 {
-    
+    public HttpDeleteAttribute(string? template = null) : base("DELETE", template) { }
 }

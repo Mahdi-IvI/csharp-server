@@ -1,6 +1,6 @@
 namespace semester_project.Presentation.Http.Routing.Attributes;
 
-public class HttpPutAttribute
+public sealed class HttpPutAttribute : HttpMethodAttribute
 {
-    
+    public HttpPutAttribute(string? template = null) : base("PUT", template) { }
 }

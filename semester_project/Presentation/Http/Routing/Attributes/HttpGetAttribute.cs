@@ -1,6 +1,6 @@
 namespace semester_project.Presentation.Http.Routing.Attributes;
 
-public class HttpGetAttribute
+public sealed class HttpGetAttribute : HttpMethodAttribute
 {
-    
+    public HttpGetAttribute(string? template = null) : base("GET", template) { }
 }

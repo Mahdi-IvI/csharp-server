@@ -1,4 +1,4 @@
-namespace semester_project.models;
+namespace semester_project.Domain.Entities;
 
 public class Rate(
     string id,
@@ -15,5 +15,4 @@ public class Rate(
     public int Star { get; set; } = star;
     public string? Comment { get; set; } = comment;
     public string Timestamp { get; set; } = timestamp;
-    public bool IsConfirmed { get; set; } = isConfirmed;
 }

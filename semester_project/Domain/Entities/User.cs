@@ -1,7 +1,6 @@
-namespace semester_project.models;
 
-[ApiController]
-[Route("users")]
+namespace semester_project.Domain.Entities;
+
 public class User(string id, string username, string password)
 {
     public string Id { get; set; } = id;

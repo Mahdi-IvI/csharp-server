@@ -1,6 +1,7 @@
 namespace semester_project.Application.UseCases.Users;
 
-public class LoginUserResult
+public sealed class LoginUserResult
 {
-    
+    public LoginUserResult(string token) { Token = token; }
+    public string Token { get; }
 }

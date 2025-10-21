@@ -1,4 +1,5 @@
 using System.Text.Json;
+using semester_project.Application.UseCases.Users;
 using semester_project.Presentation.Http;
 using semester_project.Presentation.Http.Contracts.Auth;
 using semester_project.Presentation.Http.Routing.Attributes;
@@ -24,9 +25,10 @@ public sealed class UsersController
             return; // empty body by design
         }
 
-        // No DB: we just return a token based on username.
-        var token = $"{dto.Username}-mrpToken";
-        await res.WriteJsonAsync(new TokenResponse(token)).ConfigureAwait(false);
+        var result = await App.RegisterUser.HandleAsync(
+            new RegisterUserCommand(dto!.Username!, dto.Password!)
+        );
+        await res.WriteJsonAsync(new TokenResponse(result.Token));
     }
 
     // POST /auth/login
@@ -42,7 +44,9 @@ public sealed class UsersController
             return;
         }
 
-        var token = $"{dto.Username}-mrpToken";
-        await res.WriteJsonAsync(new TokenResponse(token)).ConfigureAwait(false);
+        var result = await App.LoginUser.HandleAsync(
+            new LoginUserCommand(dto!.Username!, dto.Password!)
+        );
+        await res.WriteJsonAsync(new TokenResponse(result.Token));
     }
 }
