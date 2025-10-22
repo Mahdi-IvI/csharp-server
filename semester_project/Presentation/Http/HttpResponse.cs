@@ -11,7 +11,7 @@ public class HttpResponse
     internal HttpResponse(System.Net.HttpListenerResponse inner)
     {
         _inner = inner ?? throw new ArgumentNullException(nameof(inner));
-        _inner.StatusCode = 204; // default: empty response
+        _inner.StatusCode = 204; // default for empty response
     }
 
     public int StatusCode

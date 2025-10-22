@@ -13,7 +13,7 @@ class Program
 
         var router = Router.Discover(
             basePath: "api",
-            assemblies: new[] { Assembly.GetExecutingAssembly() }
+            assemblies: [Assembly.GetExecutingAssembly()]
         );
         router.DumpRoutes();
 
@@ -22,6 +22,6 @@ class Program
 
         Console.WriteLine("Press ENTER to stop.");
         Console.ReadLine();
-        await server.StopAsync();
+        await server.Stop();
     }
 }

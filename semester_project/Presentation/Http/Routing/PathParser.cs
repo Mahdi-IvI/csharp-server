@@ -4,18 +4,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public sealed class PathTemplate
+public sealed class PathParser
 {
     private readonly string[] _segments;
     private readonly Segment[] _compiled;
 
-    private PathTemplate(string template)
+    private PathParser(string path)
     {
-        _segments = Split(template);
+        _segments = Split(path);
         _compiled = _segments.Select(ParseSegment).ToArray();
     }
 
-    public static PathTemplate Compile(string template) => new PathTemplate(template);
+    public static PathParser Compile(string path) => new PathParser(path);
 
     public bool TryMatch(string path, out Dictionary<string, string> routeValues)
     {

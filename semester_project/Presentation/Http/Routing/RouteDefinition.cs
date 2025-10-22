@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 public sealed class RouteDefinition
 {
     public string HttpMethod { get; }
-    public string Template { get; }
-    public PathTemplate Path { get; }
+    public string URL { get; }
+    public PathParser Path { get; }
     public Type ControllerType { get; }
     public MethodInfo Method { get; }
 
-    public RouteDefinition(string httpMethod, string template, Type controllerType, MethodInfo method)
+    public RouteDefinition(string httpMethod, string url, Type controllerType, MethodInfo method)
     {
         HttpMethod = httpMethod;
-        Template = template;
-        Path = PathTemplate.Compile(template);
+        URL = url;
+        Path = PathParser.Compile(url);
         ControllerType = controllerType;
         Method = method;
     }
@@ -40,7 +40,6 @@ public sealed class RouteDefinition
         }
         else
         {
-            // Not supported in this first step; feel free to extend for route values injection later.
             throw new InvalidOperationException(
                 $"Unsupported action signature: {Method.DeclaringType?.Name}.{Method.Name}");
         }

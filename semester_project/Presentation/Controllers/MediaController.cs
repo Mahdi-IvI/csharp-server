@@ -3,7 +3,7 @@ using semester_project.Presentation.Http.Routing.Attributes;
 
 namespace semester_project.Presentation.Controllers;
 
-[Route("api/media")]
+[Route("media")]
 public sealed class MediaController
 {
     // POST /media/

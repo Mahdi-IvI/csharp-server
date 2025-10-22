@@ -1,3 +1,5 @@
+using semester_project.Application.Ports;
+using semester_project.Application.Services;
 using semester_project.Application.UseCases.Users;
 using semester_project.Infrastructure;
 
@@ -10,9 +12,10 @@ public static class App
 
     public static void Configure()
     {
-        var tokenService = new StaticTokenService();
+        ICredentialStore store = new Infrastructure.Database(); // shared in-memory list
+        ITokenService tokenService = new StaticTokenService();  // "{username}-mrpToken"
 
-        RegisterUser = new RegisterUserHandler(tokenService);
-        LoginUser    = new LoginUserHandler(tokenService);
+        RegisterUser = new RegisterUserHandler(store, tokenService);
+        LoginUser    = new LoginUserHandler(store, tokenService);
     }
 }

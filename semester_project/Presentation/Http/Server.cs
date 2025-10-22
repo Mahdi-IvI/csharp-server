@@ -31,7 +31,7 @@ public sealed class Server : IDisposable
         Console.WriteLine($"[HttpServer] Listening on: {string.Join(", ", _listener.Prefixes)}");
     }
 
-    public async Task StopAsync()
+    public async Task Stop()
     {
         if (_cts == null) return;
 
@@ -92,7 +92,6 @@ public sealed class Server : IDisposable
                                      $"Cannot create controller {route.ControllerType.Name}");
 
                 await route.InvokeAsync(controller, req, res).ConfigureAwait(false);
-                // Controllers currently write nothing => 204 No Content stays.
             }
             else
             {

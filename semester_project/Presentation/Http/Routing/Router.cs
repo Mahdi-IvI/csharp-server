@@ -7,7 +7,7 @@ namespace semester_project.Presentation.Http.Routing;
 public sealed class Router
 {
     private readonly List<RouteDefinition> _routes = new();
-    private readonly string _basePath; // e.g. "api" or ""
+    private readonly string _basePath; // base path: api/
 
     private Router(string? basePath)
     {
@@ -16,7 +16,7 @@ public sealed class Router
 
     public static Router Discover(string? basePath = null, params Assembly[] assemblies)
     {
-        if (assemblies == null || assemblies.Length == 0)
+        if (assemblies.Length == 0)
             assemblies = new[] { Assembly.GetExecutingAssembly() };
 
         var router = new Router(basePath);
@@ -28,7 +28,7 @@ public sealed class Router
                 var routeAttr = type.GetCustomAttribute<RouteAttribute>();
                 if (routeAttr is null) continue;
 
-                var baseTemplate = routeAttr.Template; // normalized already
+                var baseTemplate = routeAttr.Name; // normalized already
 
                 foreach (var method in type.GetMethods(BindingFlags.Instance | BindingFlags.Public |
                                                        BindingFlags.DeclaredOnly))
@@ -36,7 +36,7 @@ public sealed class Router
                     var httpAttr = method.GetCustomAttributes<HttpMethodAttribute>().FirstOrDefault();
                     if (httpAttr is null) continue;
 
-                    var fullTemplate = Combine(baseTemplate, httpAttr.Template);
+                    var fullTemplate = Combine(baseTemplate, httpAttr.Name);
                     router._routes.Add(new RouteDefinition(httpAttr.Method, fullTemplate, type, method));
                 }
             }
@@ -45,11 +45,12 @@ public sealed class Router
         return router;
     }
     
+    // print Routes list for debugging
     public void DumpRoutes()
     {
         Console.WriteLine("=== Discovered routes ===");
-        foreach (var r in _routes.OrderBy(r => r.HttpMethod).ThenBy(r => r.Template))
-            Console.WriteLine($"{r.HttpMethod,-6} /{(string.IsNullOrEmpty(_basePath) ? "" : _basePath + "/")}{r.Template}  -> {r.ControllerType.Name}.{r.Method.Name}()");
+        foreach (var r in _routes)
+            Console.WriteLine($"{r.HttpMethod,-6} /{(string.IsNullOrEmpty(_basePath) ? "" : _basePath + "/")}{r.Path}  -> {r.ControllerType.Name}.{r.Method.Name}()");
     }
 
     public bool TryMatch(string httpMethod, string path, out RouteDefinition? route,

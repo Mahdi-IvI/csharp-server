@@ -1,16 +1,16 @@
 namespace semester_project.Presentation.Http.Routing.Attributes;
 
-[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class RouteAttribute : Attribute
 {
-    public string Template { get; }
+    public string Name { get; }
 
-    public RouteAttribute(string template)
+    public RouteAttribute(string name)
     {
-        if (string.IsNullOrWhiteSpace(template))
-            throw new ArgumentException("Route template cannot be empty.", nameof(template));
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Route Name cannot be empty.", nameof(name));
 
-        Template = Normalize(template);
+        Name = Normalize(name);
     }
 
     internal static string Normalize(string t)
