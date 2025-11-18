@@ -1,17 +1,16 @@
-using semester_project.Application.Common;
-using semester_project.Application.Ports;
+using semester_project.Application.Repositories;
 using semester_project.Application.Services;
 
 namespace semester_project.Application.UseCases.Users;
 
 public sealed class LoginUserHandler
 {
-    private readonly ICredentialStore _store;
+    private readonly IUserRepository _users;
     private readonly ITokenService _tokenService;
 
-    public LoginUserHandler(ICredentialStore store, ITokenService tokenService)
+    public LoginUserHandler(IUserRepository users, ITokenService tokenService)
     {
-        _store = store ?? throw new ArgumentNullException(nameof(store));
+        _users = users ?? throw new ArgumentNullException(nameof(users));
         _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
     }
 
@@ -20,10 +19,25 @@ public sealed class LoginUserHandler
         if (string.IsNullOrWhiteSpace(input.Username) || string.IsNullOrWhiteSpace(input.Password))
             throw new ArgumentException("Username and password are required.");
 
-        var valid = await _store.ValidateAsync(input.Username, input.Password).ConfigureAwait(false);
-        if (!valid) throw new InvalidCredentialsException();
+        try
+        {
+            var user = await _users.GetByUsernameAsync(input.Username);
+            if (user is null) throw new UnauthorizedAccessException("Invalid credentials.");
 
-        var token = _tokenService.Generate(input.Username);
-        return new LoginUserResult(token);
+            Console.WriteLine(user.Password);
+            Console.WriteLine(input.Password);
+            Console.WriteLine(input.Password.Equals(user.Password));
+            if (!input.Password.Equals(user.Password))
+                throw new UnauthorizedAccessException("Invalid credentials.");
+
+            var token = _tokenService.Generate(input.Username);
+            return new LoginUserResult(token);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+
+        return new LoginUserResult("token");
     }
 }

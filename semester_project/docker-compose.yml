@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:16
+    container_name: mrp-postgres
+    environment:
+      POSTGRES_DB: mrp
+      POSTGRES_USER: mrp_user
+      POSTGRES_PASSWORD: mrp_password
+      TZ: Europe/Vienna
+    ports:
+      - "5432:5432"
+    volumes:
+      # Persistent data
+      - mrp_pgdata:/var/lib/postgresql/data
+      # Auto-run schema on first start (only when data dir is empty)
+      - ./schema.sql:/docker-entrypoint-initdb.d/001_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mrp_user -d mrp"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  adminer:
+    image: adminer:4
+    container_name: mrp-adminer
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8081:8080"
+    environment:
+      - ADMINER_DEFAULT_SERVER=db
+
+volumes:
+  mrp_pgdata:

@@ -7,6 +7,9 @@ public class HttpRequest
 {
     private readonly System.Net.HttpListenerRequest _inner;
 
+    private Dictionary<string, string> _routeValues =
+        new(StringComparer.OrdinalIgnoreCase);
+
     internal HttpRequest(System.Net.HttpListenerRequest inner)
     {
         _inner = inner ?? throw new ArgumentNullException(nameof(inner));
@@ -39,4 +42,12 @@ public class HttpRequest
 
     public override string ToString()
         => $"{Method} {Path}{(_inner.Url!.Query ?? string.Empty)}";
+
+    public IReadOnlyDictionary<string, string> RouteValues => _routeValues;
+
+    internal void SetRouteValues(Dictionary<string, string> values)
+        => _routeValues = values ?? new(StringComparer.OrdinalIgnoreCase);
+
+    public bool TryGetRouteValue(string key, out string value)
+        => _routeValues.TryGetValue(key, out value);
 }

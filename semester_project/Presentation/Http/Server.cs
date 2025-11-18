@@ -85,8 +85,9 @@ public sealed class Server : IDisposable
         try
         {
             // Try to match route
-            if (_router.TryMatch(req.Method, req.Path, out var route, out var _))
+            if (_router.TryMatch(req.Method, req.Path, out var route, out var values))
             {
+                req.SetRouteValues(values);
                 var controller = Activator.CreateInstance(route!.ControllerType)
                                  ?? throw new InvalidOperationException(
                                      $"Cannot create controller {route.ControllerType.Name}");

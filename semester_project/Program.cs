@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using semester_project.Presentation;
+﻿using semester_project.Presentation;
 using semester_project.Presentation.Http;
 using semester_project.Presentation.Http.Routing;
 
@@ -12,8 +11,7 @@ class Program
         App.Configure();
 
         var router = Router.Discover(
-            basePath: "api",
-            assemblies: [Assembly.GetExecutingAssembly()]
+            basePath: "api"
         );
         router.DumpRoutes();
 

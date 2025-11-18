@@ -23,7 +23,7 @@ public sealed class RouteDefinition
 
     public async Task InvokeAsync(object controllerInstance, HttpRequest req, HttpResponse res)
     {
-        // Minimal injection: pass HttpRequest / HttpResponse if parameters declare them; otherwise call parameterless.
+        // pass HttpRequest / HttpResponse if parameters declare them; otherwise call parameterless.
         var parameters = Method.GetParameters();
         object?[] args;
         

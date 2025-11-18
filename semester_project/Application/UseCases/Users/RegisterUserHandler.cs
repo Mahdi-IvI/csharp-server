@@ -1,17 +1,17 @@
-using semester_project.Application.Common;
-using semester_project.Application.Ports;
+using semester_project.Application.Repositories;
 using semester_project.Application.Services;
+using semester_project.Domain.Entities;
 
 namespace semester_project.Application.UseCases.Users;
 
 public sealed class RegisterUserHandler
 {
-    private readonly ICredentialStore _store;
     private readonly ITokenService _tokenService;
+    private readonly IUserRepository _users;
 
-    public RegisterUserHandler(ICredentialStore store, ITokenService tokenService)
+    public RegisterUserHandler(IUserRepository users, ITokenService tokenService)
     {
-        _store = store ?? throw new ArgumentNullException(nameof(store));
+        _users = users ?? throw new ArgumentNullException(nameof(users));
         _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
     }
 
@@ -20,10 +20,27 @@ public sealed class RegisterUserHandler
         if (string.IsNullOrWhiteSpace(input.Username) || string.IsNullOrWhiteSpace(input.Password))
             throw new ArgumentException("Username and password are required.");
 
-        if (await _store.ExistsAsync(input.Username).ConfigureAwait(false))
-            throw new UsernameAlreadyExistsException(input.Username);
+        if (await _users.ExistsByUsernameAsync(input.Username))
+            throw new InvalidOperationException("Username already exists.");
 
-        await _store.AddAsync(input.Username, input.Password).ConfigureAwait(false);
+
+        var user = new User
+        (
+            0,
+            input.Username, input.Password, null, null, null, DateTime.UtcNow
+        );
+        long newId = 0;
+        try
+        {
+            newId = await _users.AddAsync(user);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+        user.Id = newId;
+
 
         var token = _tokenService.Generate(input.Username);
         return new RegisterUserResult(token);

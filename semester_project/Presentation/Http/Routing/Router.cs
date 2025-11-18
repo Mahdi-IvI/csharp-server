@@ -1,4 +1,3 @@
-
 using System.Reflection;
 using semester_project.Presentation.Http.Routing.Attributes;
 
@@ -14,43 +13,42 @@ public sealed class Router
         _basePath = (basePath ?? string.Empty).Trim('/').ToLowerInvariant();
     }
 
-    public static Router Discover(string? basePath = null, params Assembly[] assemblies)
+    public static Router Discover(string? basePath = null)
     {
-        if (assemblies.Length == 0)
-            assemblies = new[] { Assembly.GetExecutingAssembly() };
+        Assembly assembly = Assembly.GetExecutingAssembly();
 
         var router = new Router(basePath);
 
-        foreach (var asm in assemblies)
+
+        foreach (var type in assembly.GetTypes())
         {
-            foreach (var type in asm.GetTypes())
+            var routeAttr = type.GetCustomAttribute<RouteAttribute>();
+            if (routeAttr is null) continue;
+
+            var baseTemplate = routeAttr.Name; 
+
+            foreach (var method in type.GetMethods(BindingFlags.Instance | BindingFlags.Public |
+                                                   BindingFlags.DeclaredOnly))
             {
-                var routeAttr = type.GetCustomAttribute<RouteAttribute>();
-                if (routeAttr is null) continue;
+                var httpAttr = method.GetCustomAttributes<HttpMethodAttribute>().FirstOrDefault();
+                if (httpAttr is null) continue;
 
-                var baseTemplate = routeAttr.Name; // normalized already
-
-                foreach (var method in type.GetMethods(BindingFlags.Instance | BindingFlags.Public |
-                                                       BindingFlags.DeclaredOnly))
-                {
-                    var httpAttr = method.GetCustomAttributes<HttpMethodAttribute>().FirstOrDefault();
-                    if (httpAttr is null) continue;
-
-                    var fullTemplate = Combine(baseTemplate, httpAttr.Name);
-                    router._routes.Add(new RouteDefinition(httpAttr.Method, fullTemplate, type, method));
-                }
+                var fullTemplate = Combine(baseTemplate, httpAttr.Name);
+                router._routes.Add(new RouteDefinition(httpAttr.Method, fullTemplate, type, method));
             }
         }
 
+
         return router;
     }
-    
+
     // print Routes list for debugging
     public void DumpRoutes()
     {
         Console.WriteLine("=== Discovered routes ===");
         foreach (var r in _routes)
-            Console.WriteLine($"{r.HttpMethod,-6} /{(string.IsNullOrEmpty(_basePath) ? "" : _basePath + "/")}{r.Path}  -> {r.ControllerType.Name}.{r.Method.Name}()");
+            Console.WriteLine(
+                $"{r.HttpMethod,-6} /{(string.IsNullOrEmpty(_basePath) ? "" : _basePath + "/")}{r.Path}  -> {r.ControllerType.Name}.{r.Method.Name}()");
     }
 
     public bool TryMatch(string httpMethod, string path, out RouteDefinition? route,
