@@ -15,7 +15,7 @@ services:
       # Auto-run schema on first start (only when data dir is empty)
       - ./schema.sql:/docker-entrypoint-initdb.d/001_schema.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U mrp_user -d mrp"]
+      test: [ "CMD-SHELL", "pg_isready -U mrp_user -d mrp" ]
       interval: 5s
       timeout: 3s
       retries: 10
