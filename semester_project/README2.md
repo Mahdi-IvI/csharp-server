@@ -1,10 +1,11 @@
 # Media Ratings Platform (MRP)
 
-A standalone RESTful HTTP server that provides an API for managing media (movies/series/games), rating and moderating comments, liking ratings, favorites, recommendations, and a public leaderboard. This project follows the “Media Ratings Platform (MRP)” specification.
+A standalone RESTful HTTP server (no ASP.NET) that provides an API for managing media (movies/series/games), rating and moderating comments, liking ratings, favorites, recommendations, and a public leaderboard. This project follows the “Media Ratings Platform (MRP)” specification.
 
 The server listens on:
 
 - `http://localhost:8080/`
+- API base path: `http://localhost:8080/api`
 
 ---
 
@@ -15,7 +16,7 @@ The server listens on:
 - Media CRUD (create, update, delete, get by id)
 - Media search with filtering and sorting
 - Ratings (1–5 stars) with optional comments
-- Comment moderation: comments become publicly visible only after confirmation
+- Comment moderation: comments become publicly visible only after the author confirms them
 - Like other users’ ratings (one like per rating per user)
 - Favorite / unfavorite media
 - Rating history & favorites list per user
@@ -27,13 +28,13 @@ The server listens on:
 ## Tech Stack
 
 - **Language/Runtime:** C# / .NET
-- **HTTP Server:** custom REST server using `HttpListener`-style approach
+- **HTTP Server:** custom REST server using `HttpListener`-style approach (no ASP.NET)
 - **Database:** PostgreSQL (can be run via Docker)
 - **Testing:** unit tests in `Tests/`
 
 ---
 
-## Project Structure (Layered Architecture)
+## Project Structure (Clean Architecture)
 
 High-level structure (layers + tests):
 
@@ -56,16 +57,30 @@ High-level structure (layers + tests):
 
 - **.NET SDK** compatible with the project (see `semester_project/semester_project.csproj`)
 - **PostgreSQL**
-    - run via Docker using `semester_project/docker-compose.yml`
+  - either installed locally, or
+  - run via Docker using `semester_project/docker-compose.yml`
 
 ### Database Setup
 
-1. Start PostgreSQL (Docker).
+1. Start PostgreSQL (Docker or local).
 2. Initialize the schema using the provided SQL:
-    - `schema.sql` exists at the repository root and also under `semester_project/schema.sql`.
+   - `schema.sql` exists at the repository root and also under `semester_project/schema.sql`.
 
+Example (if you have `psql` locally):
+
+```bash
+psql -h localhost -U <user> -d <database> -f schema.sql
+```
+
+If you use Docker Compose, check `semester_project/docker-compose.yml` for the configured database name/user/password/port, then apply the schema accordingly.
 
 ### Run the Server
+
+From the repository root:
+
+```bash
+dotnet run --project semester_project/semester_project.csproj
+```
 
 Once started, the server listens on `http://localhost:8080/` and exposes routes under `/api`.
 
@@ -75,16 +90,27 @@ Once started, the server listens on `http://localhost:8080/` and exposes routes 
 
 This project uses **token-based authorization**.
 
-- **Public endpoints:** registration, login and leaderboard
+- **Public endpoints:** registration and login
 - **All other endpoints:** require a bearer token
 
-### Login
+Use this header on authenticated requests:
+
+- `Authorization: Bearer <token>`
+
+### Login Example
 
 ```bash
-http://localhost:8080/api/users/login
+curl -s -X POST "http://localhost:8080/api/users/login" \
+  -H "Content-Type: application/json" \
+  -d '{ "username": "mustermann", "password": "max" }'
 ```
 
 The response returns a token (string). Use it in subsequent requests:
+
+```bash
+curl -s "http://localhost:8080/api/leaderboard" \
+  -H "Authorization: Bearer <token>"
+```
 
 ---
 
@@ -119,11 +145,13 @@ Supported query parameters (combine as needed):
 Examples:
 
 ```bash
-http://localhost:8080/api/media?title=incep&genre=sci-fi&sortBy=score
+curl -s "http://localhost:8080/api/media?title=incep&genre=sci-fi&sortBy=score" \
+  -H "Authorization: Bearer <token>"
 ```
 
 ```bash
-http://localhost:8080/api/media?title=inception&genre=sci-fi&mediaType=movie&releaseYear=2010&ageRestriction=12&rating=4&sortBy=title 
+curl -s "http://localhost:8080/api/media?title=inception&genre=sci-fi&mediaType=movie&releaseYear=2010&ageRestriction=12&rating=4&sortBy=title" \
+  -H "Authorization: Bearer <token>"
 ```
 
 ### Ratings
@@ -151,6 +179,15 @@ http://localhost:8080/api/media?title=inception&genre=sci-fi&mediaType=movie&rel
 
 ---
 
+## Response Codes
+
+The API aims to follow standard HTTP semantics:
+
+- `2XX` success
+- `4XX` client error (bad input, missing/invalid auth, forbidden actions)
+- `5XX` server error (unexpected failures)
+
+---
 
 ## Unit Tests
 
@@ -169,9 +206,63 @@ dotnet test Tests/Tests.csproj
 - **Layering:** Presentation → Application → Domain → Infrastructure, to keep HTTP/DTO concerns separate from business rules and persistence.
 - **Persistence:** repositories under `4Infrastructure/repositories` encapsulate PostgreSQL access.
 - **Security:** token service + bearer tokens protect all endpoints except register/login.
-- **Moderation:** rating comments are only publicly visible after confirmation.
+- **Moderation:** rating comments are only publicly visible after user confirmation (author moderation).
 
 ---
 
-## Github Link
-- `https://github.com/Mahdi-IvI/csharp-server.git`
+## Quick cURL Cookbook
+
+Register:
+
+```bash
+curl -s -X POST "http://localhost:8080/api/users/register" \
+  -H "Content-Type: application/json" \
+  -d '{ "username": "alice", "password": "secret" }'
+```
+
+Login:
+
+```bash
+TOKEN=$(curl -s -X POST "http://localhost:8080/api/users/login" \
+  -H "Content-Type: application/json" \
+  -d '{ "username": "alice", "password": "secret" }')
+echo "$TOKEN"
+```
+
+Create media:
+
+```bash
+curl -s -X POST "http://localhost:8080/api/media" \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Inception",
+    "description": "A mind-bending thriller.",
+    "mediaType": "movie",
+    "releaseYear": "2010",
+    "genres": ["sci-fi", "thriller"],
+    "ageRestriction": 12
+  }'
+```
+
+Rate media:
+
+```bash
+curl -s -X POST "http://localhost:8080/api/media/1/rate" \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{ "stars": 5, "comment": "Excellent." }'
+```
+
+Confirm rating comment (example rating id = 10):
+
+```bash
+curl -s -X POST "http://localhost:8080/api/ratings/10/confirm" \
+  -H "Authorization: Bearer <token>"
+```
+
+---
+
+## License
+
+Educational project (MRP assignment). Add a license here if your course or repository requires one.

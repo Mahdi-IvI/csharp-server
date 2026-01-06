@@ -9,7 +9,7 @@ public class PostgresLeaderboardRepository(PostgresConnectionFactory factory) : 
 {
     public async Task<IReadOnlyList<LeaderboardEntry>> GetLeaderboardAsync()
     {
-        // Spec: leaderboard sorted by number of ratings per user.
+        // leaderboard sorted by number of ratings per user.
         const string sql = @"
             SELECT
                 u.id,

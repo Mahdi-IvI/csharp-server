@@ -75,7 +75,6 @@ public sealed class PostgresUserRepository(PostgresConnectionFactory factory) : 
 
     private static User Map(NpgsqlDataReader reader)
     {
-        Console.WriteLine("try to map user");
         int ixId = reader.GetOrdinal("id");
         int ixUname = reader.GetOrdinal("username");
         int ixPassword = reader.GetOrdinal("password");
@@ -137,7 +136,7 @@ public sealed class PostgresUserRepository(PostgresConnectionFactory factory) : 
             cmd.Parameters.AddWithValue("@favorite_genre", genre.Value.ToString());
         }
 
-        // If nothing to update (should be caught earlier), just return false
+        // If nothing to update, just return false
         if (set.Length == 0) return false;
 
         var sql = $@"

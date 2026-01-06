@@ -1,0 +1,189 @@
+.
+├── .DS_Store
+├── .gitignore
+├── .idea
+│   └── .idea.semester_project
+│       └── .idea
+│           ├── .gitignore
+│           ├── data_source_mapping.xml
+│           ├── dataSources
+│           │   ├── fa48c2a9-2912-4bd4-a28c-ddb4861146e3
+│           │   │   └── storage_v2
+│           │   │       └── _src_
+│           │   │           └── database
+│           │   │               ├── mrp.a6cBAA
+│           │   │               │   └── schema
+│           │   │               │       ├── information_schema.FNRwLQ.meta
+│           │   │               │       ├── pg_catalog.0S1ZNQ.meta
+│           │   │               │       └── public.abK9xQ.meta
+│           │   │               └── mrp.a6cBAA.meta
+│           │   └── fa48c2a9-2912-4bd4-a28c-ddb4861146e3.xml
+│           ├── dataSources.local.xml
+│           ├── dataSources.xml
+│           ├── encodings.xml
+│           ├── indexLayout.xml
+│           ├── inspectionProfiles
+│           ├── projectSettingsUpdater.xml
+│           ├── queries
+│           │   └── Query.sql
+│           ├── sqldialects.xml
+│           ├── vcs.xml
+│           └── workspace.xml
+├── folder-structure.txt
+├── README.md
+├── schema.sql
+├── semester_project
+│   ├── 1Presentation
+│   │   ├── App.cs
+│   │   ├── Controllers
+│   │   │   ├── LeaderboardController.cs
+│   │   │   ├── MediaController.cs
+│   │   │   ├── RatingsController.cs
+│   │   │   └── UsersController.cs
+│   │   └── Http
+│   │       ├── DTOs
+│   │       │   ├── ApiError.cs
+│   │       │   ├── Auth
+│   │       │   │   ├── LoginRequest.cs
+│   │       │   │   ├── RegisterRequest.cs
+│   │       │   │   └── TokenResponse.cs
+│   │       │   ├── Favorites
+│   │       │   │   └── UserFavoritesResponse.cs
+│   │       │   ├── Leaderboard
+│   │       │   │   └── LeaderboardResponse.cs
+│   │       │   ├── Media
+│   │       │   │   ├── CreateMediaResponse.cs
+│   │       │   │   ├── MediaDetails.cs
+│   │       │   │   ├── SearchMediaResponse.cs
+│   │       │   │   └── UpsertMediaRequest.cs
+│   │       │   ├── Ratings
+│   │       │   │   ├── CreateRatingRequest.cs
+│   │       │   │   └── UpdateRatingRequest.cs
+│   │       │   ├── Recommendations
+│   │       │   │   └── UserRecommendationsResponse.cs
+│   │       │   └── Users
+│   │       │       ├── UpdateUserProfileRequest.cs
+│   │       │       └── UserProfileResponse.cs
+│   │       ├── HttpRequest.cs
+│   │       ├── HttpResponse.cs
+│   │       ├── Routing
+│   │       │   ├── Attributes
+│   │       │   │   ├── HttpDeleteAttribute.cs
+│   │       │   │   ├── HttpGetAttribute.cs
+│   │       │   │   ├── HttpMethodAttribute.cs
+│   │       │   │   ├── HttpPostAttribute.cs
+│   │       │   │   ├── HttpPutAttribute.cs
+│   │       │   │   └── RouteAttribute.cs
+│   │       │   ├── PathParser.cs
+│   │       │   ├── RouteDefinition.cs
+│   │       │   └── Router.cs
+│   │       └── Server.cs
+│   ├── 2Application
+│   │   ├── Interfaces
+│   │   │   ├── IFavoriteRepository.cs
+│   │   │   ├── ILeaderboardRepository.cs
+│   │   │   ├── IMediaRepository.cs
+│   │   │   ├── IRatingRepository.cs
+│   │   │   ├── IRecommendationRepository.cs
+│   │   │   ├── ITokenService.cs
+│   │   │   └── IUserRepository.cs
+│   │   └── UseCases
+│   │       ├── Favorites
+│   │       │   ├── CreateFavoriteResult.cs
+│   │       │   ├── FavoriteInput.cs
+│   │       │   ├── FavoriteMediaHandler.cs
+│   │       │   ├── GetUserFavoriteItem.cs
+│   │       │   ├── GetUserFavoritesHandler.cs
+│   │       │   ├── GetUserFavoritesInput.cs
+│   │       │   └── UnfavoriteMediaHandler.cs
+│   │       ├── Leaderboard
+│   │       │   ├── GetLeaderboardHandler.cs
+│   │       │   └── LeaderboardEntry.cs
+│   │       ├── Media
+│   │       │   ├── CreateMediaHandler.cs
+│   │       │   ├── CreateMediaInput.cs
+│   │       │   ├── CreateMediaResult.cs
+│   │       │   ├── DeleteMediaHandler.cs
+│   │       │   ├── DeleteMediaInput.cs
+│   │       │   ├── GetMediaByIdHandler.cs
+│   │       │   ├── GetMediaByIdInput.cs
+│   │       │   ├── MediaSearchItem.cs
+│   │       │   ├── SearchMediaHandler.cs
+│   │       │   ├── SearchMediaInput.cs
+│   │       │   ├── UpdateMediaHandler.cs
+│   │       │   └── UpdateMediaInput.cs
+│   │       ├── Ratings
+│   │       │   ├── ApproveRatingCommentHandler.cs
+│   │       │   ├── ApproveRatingCommentInput.cs
+│   │       │   ├── CreateRatingHandler.cs
+│   │       │   ├── CreateRatingInput.cs
+│   │       │   ├── CreateRatingResult.cs
+│   │       │   ├── DeleteRatingHandler.cs
+│   │       │   ├── DeleteRatingInput.cs
+│   │       │   ├── GetUserRatingHistoryHandler.cs
+│   │       │   ├── GetUserRatingHistoryInput.cs
+│   │       │   ├── GetUserRatingHistoryItem.cs
+│   │       │   ├── LikeRateHandler.cs
+│   │       │   ├── LikeRateInput.cs
+│   │       │   ├── LikeRateResult.cs
+│   │       │   ├── UpdateRatingHandler.cs
+│   │       │   ├── UpdateRatingInput.cs
+│   │       │   └── UserRatingHistoryResponse.cs
+│   │       ├── Recommendations
+│   │       │   ├── GetUserRecommendationsHandler.cs
+│   │       │   ├── GetUserRecommendationsInput.cs
+│   │       │   ├── RecommendationItem.cs
+│   │       │   └── RecommendationType.cs
+│   │       └── Users
+│   │           ├── GetUserByUsernameHandler.cs
+│   │           ├── GetUserProfileHandler.cs
+│   │           ├── LoginUserHandler.cs
+│   │           ├── LoginUserInput.cs
+│   │           ├── LoginUserResult.cs
+│   │           ├── RegisterUserHandler.cs
+│   │           ├── RegisterUserInput.cs
+│   │           ├── RegisterUserResult.cs
+│   │           ├── UpdateUserProfileHandler.cs
+│   │           └── UpdateUserProfileInput.cs
+│   ├── 3Domain
+│   │   ├── Entities
+│   │   │   ├── Favorite.cs
+│   │   │   ├── Like.cs
+│   │   │   ├── Media.cs
+│   │   │   ├── Rate.cs
+│   │   │   └── User.cs
+│   │   └── Enums
+│   │       ├── Genre.cs
+│   │       └── MediaType.cs
+│   ├── 4Infrastructure
+│   │   ├── data
+│   │   │   └── PostgresConnectionFactory.cs
+│   │   ├── repositories
+│   │   │   ├── PostgresFavoriteRepository.cs
+│   │   │   ├── PostgresLeaderboardRepository.cs
+│   │   │   ├── PostgresMediaRepository.cs
+│   │   │   ├── PostgresRatingRepository.cs
+│   │   │   ├── PostgresRecommendationRepository.cs
+│   │   │   └── PostgresUserRepository.cs
+│   │   └── StaticTokenService.cs
+│   ├── docker-compose.yml
+│   ├── Program.cs
+│   ├── README.md
+│   ├── schema.sql
+│   └── semester_project.csproj
+├── semester_project.sln
+├── semester_project.sln.DotSettings.user
+└── Tests
+    ├── Media
+    │   ├── CreateMediaHandlerTests.cs
+    │   ├── DeleteMediaHandlerTests.cs
+    │   └── UpdateMediaHandlerTests.cs
+    ├── Tests.csproj
+    └── Users
+        ├── GetUserByUsernameHandlerTests.cs
+        ├── GetUserProfileHandlerTests.cs
+        ├── LoginUserHandlerTests.cs
+        ├── RegisterUserHandlerTests.cs
+        └── UpdateUserProfileHandlerTests.cs
+
+46 directories, 141 files
